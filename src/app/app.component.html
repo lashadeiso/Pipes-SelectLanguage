@@ -1,0 +1,143 @@
+<!-- -------------------------Date Pipes----------------------
+
+ 
+<p>
+  {{ dateTimeNow | date }}
+</p>
+
+ 
+ამ მაგალითში date არის ფაიფი და ის გამოგვიტანს თარიღს შემდეგი სახით Dec 10,2022 
+არსებობს კიდევ უამრავი იგზამფლი რომელიც შეგვიძლია ვნახოთ ანგულარის
+ოფიციალურ საიტზე 
+
+მაგალითად:
+
+'short': equivalent to 'M/d/yy, h:mm a' (6/15/15, 9:03 AM).
+'medium': equivalent to 'MMM d, y, h:mm:ss a' (Jun 15, 2015, 9:03:01 AM).
+'long': equivalent to 'MMMM d, y, h:mm:ss a z' (June 15, 2015 at 9:03:01 AM GMT+1).
+'full': equivalent to 'EEEE, MMMM d, y, h:mm:ss a zzzz' (Monday, June 15, 2015 at 9:03:01 AM GMT+01:00).
+'shortDate': equivalent to 'M/d/yy' (6/15/15).
+'mediumDate': equivalent to 'MMM d, y' (Jun 15, 2015).
+'longDate': equivalent to 'MMMM d, y' (June 15, 2015).
+'fullDate': equivalent to 'EEEE, MMMM d, y' (Monday, June 15, 2015).
+'shortTime': equivalent to 'h:mm a' (9:03 AM).
+'mediumTime': equivalent to 'h:mm:ss a' (9:03:01 AM).
+'longTime': equivalent to 'h:mm:ss a z' (9:03:01 AM GMT+1).
+'fullTime': equivalent to 'h:mm:ss a zzzz' (9:03:01 AM GMT+01:00). 
+
+მისი გამოყენების ერთ ერთი მაგალითი არის შემდეგი  
+
+<p>
+  {{ dateTimeNow | date : "shortDate" }}
+</p> 
+
+-->
+
+<!-- -------------------------Text Pipes----------------------
+
+ 
+ასევე ვნახოთ რამოდენიმე მაგალითი ტექსტ ფაიფების:
+
+<p>{{ fullName | uppercase }}</p>
+
+<p>{{ amount | currency }}</p> 
+
+-->
+
+<!-- -------------------------Json Pipe----------------------
+
+ერთ ერთი მნშივნელოვანი ფაიფი არის json ფაიფი
+თუ მას ასეთი სახით გამოვიტანთ 
+
+<p>{{ user }}</p>
+
+ მივიღებთ,ასეთ შედეგს
+[object Object] 
+
+მაგრამ თუ გამოვიყენებთ შემდეგ json ფაიფს
+<p>{{ user | json }}</p>
+
+მივიღბთ შემდეგ ობიექტს
+
+{ "name": "lasha", "surname": "deisadze", "age": "25" }  
+
+-->
+
+<!-- -------------------------Async Pipe----------------------
+
+ ასევე ერთ ერთი ყველაზე მნშივნელოვანი ფაიფი არის async ფაიფი.
+ როდესაც საქმე გვაქვს რაიმე ასინქრონულ ფუნქციასთან,რომელიც მომავალში 
+ გვიბრუნებს შედეგს როგორც წესი ვქმნით რაღაც observable ის ტიპის ცვლადს,
+ ვუტოლებთ ამ ფუნქციას და შემდეგ ვუსაბსქრაიბდებით.ამ ყველაფერს კი აკეთებს 
+ async ფაიფი გნავიხილოდ მისი მაგალით,ამისათვის შევქმნათ hotel ის სერვვისი 
+
+<p>{{ hotelObservable$ }}</p>
+
+ესეთიჩანაწერი გამოიტანს ისევ [object Object] ხოლო ესეთი ჩანაწერი
+
+<p>{{ hotelObservable$ | async }}</p>
+
+[object Object],[object Object],[object Object], [object Object],[object
+Object],[object Object], [object Object],[object Object] ეხლა კი დაგვრჩა ის რო
+json ფაიფიც დავუწეროთ
+
+<p>{{ hotelObservable$ | async | json }}</p>
+
+ეს უკვე წამოიღებს ყველა ობიექტს,და რაც მთავარია ეს მოხდა subscribe ის გარეშე,
+რადგან async თავისთავში უკეთებს საბსქრაიბს ეხლა კი ეს ობიექტების მასივი
+დავატრიალოთ ngFor ში,და ამოვიღოთ ფოტოები  
+
+<div *ngFor="let item of hotelObservable$ | async">
+  <img [src]="item.mainImage" alt="" />
+</div>
+
+-->
+
+<!-- -------------------------Custom Pipe----------------------
+
+ასევე ჩვენ შეგვიძლია ცალკე შევქმნათ ფაიფი,და განვიხილოთ მაის მაგალითი splice
+ფაიფის შემთხვევაში,როცა გვინდა რაღაც ტექსტი გამოვაჩინოთ მთავარზე და დანარჩენი
+show more ზე. ამისათვის გავუშვათ ბრძანება npx ng g p text-limit --skip-tests ანუ ჩვენს ფაიფს
+სახელად დავარქვით text-limit 
+უნდა ვიცოდეთ რომ ყველა ქასთომ ფაიფი ანუ ჩვენი შექმნილი ფაიფი არის PipeTransform ის
+შვილობილი ანუ დაიმპლემენტირებულია მისგან,რომელიც გვავალდებულებს გადავტვირთოთ
+ფუნქცია transform რომელსაც გადაეცემე პარამეტრები value რომელიც არის ანოუნ ტიპის
+ანუ შეიძლება იყოს ნებისმიერი და args ანუ არგუმენტები. შესაბამიასდ ჩვენ შეგვიძლია 
+ეს პარამეტრები ისე შევცვალოთ და გადავცეთ როგორც ჩვენ გვინდა და ამის მაგალითი ვნახოთ უშუალოდ 
+აღნიშნულ ფაიფში.
+
+<p>
+  {{ randomText | textLimit : maxSymbol }}
+</p>
+<button (click)="onShowMore()">Show More</button>
+
+-->
+
+<!-- -------------------------Select Language Pipe---------------------- 
+ ეხლა განვიხილოთ ენის ცვლილება ფაიფის საშუალებით,
+ამისათვის გამოვიყენოთ ანგულარ მატერიალის select ი.
+აქვე გეტყვით იმას რომ selectionChange ფუნქცია მოყვება აღნიშნულ 
+მატერიალის select -ს,თუ კი გადავალთ  API ში ვნახავთ mat-select
+ის რამოდენიმე ფუნქციას,და ერთ ერთი არის ეს selectionChange
+რომელიც ველიუს ცვლილებას აემიტებს.
+შენიშვნა: რაღაცეები 15.0 ვერსიაზე იბაგება და გადასწაყობია-->
+
+<mat-form-field appearance="fill">
+  <mat-label>Select Language</mat-label>
+  <mat-select (selectionChange)="selectLanguage($event)">
+    <mat-option *ngFor="let item of languages" [value]="item">{{
+      item
+    }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-list role="list">
+  <mat-list-item role="listitem">
+    Name: {{ students.name | language }}</mat-list-item
+  >
+  <mat-list-item role="listitem"
+    >Surname: {{ students.surname | language }}</mat-list-item
+  >
+  <mat-list-item role="listitem"
+    >Adress: {{ students.adress | language }}</mat-list-item
+  >
+</mat-list>
